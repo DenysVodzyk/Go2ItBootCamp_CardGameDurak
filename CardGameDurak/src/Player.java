@@ -22,12 +22,23 @@ public class Player {
         return hand;
     }
 
-    public int handSize(){
+    public int getHandSize() {
         return hand.size();
     }
 
     public void addCardToHand(Card card) {
-        this.hand.add(card);
+        hand.add(card);
     }
 
+    public void deleteCardFromHand(Card card) {
+        hand.remove(card);
+    }
+
+    @Override
+    public String toString() {
+        return "Player{" +
+                "id=" + id +
+                ", hand=" + hand +
+                '}';
+    }
 }
