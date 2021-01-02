@@ -6,9 +6,10 @@ public class Deck {
     private int cardsQuantity;
     private Set<Card> deck;
     private Random random;
+    private SUIT trumpCardSuit;
 
-    public Deck(int cardsQuantity) {
-        this.cardsQuantity = cardsQuantity;
+    public Deck() {
+        this.cardsQuantity = 36;
         this.deck = new HashSet<>();
         this.random = new Random();
         makeDeck();
@@ -29,9 +30,14 @@ public class Deck {
         return random.nextInt(4);
     }
 
-    public SUIT getTrumpCardSuit() {
-        return SUIT.values()[getRandomNumberForCardSuit()];
+    public void setTrumpCardSuit() {
+        this.trumpCardSuit = SUIT.values()[getRandomNumberForCardSuit()];
     }
+
+    public SUIT getTrumpCardSuit() {
+        return trumpCardSuit;
+    }
+
 
     public int getRandomNumberForCardRank() {
         return random.nextInt(9);
@@ -39,6 +45,14 @@ public class Deck {
 
     public Set<Card> getDeck() {
         return deck;
+    }
+
+    public void deleteCardFromTheDeck(Card card) {
+        deck.remove(card);
+    }
+
+    public int getDeckSize() {
+        return deck.size();
     }
 
 }
