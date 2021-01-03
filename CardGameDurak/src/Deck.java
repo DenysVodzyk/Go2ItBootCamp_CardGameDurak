@@ -47,7 +47,7 @@ public class Deck {
         return deck;
     }
 
-    public void deleteCardFromTheDeck(Card card) {
+    public void removeCardFromTheDeck(Card card) {
         deck.remove(card);
     }
 
