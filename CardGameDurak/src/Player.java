@@ -30,7 +30,7 @@ public class Player {
         hand.add(card);
     }
 
-    public void deleteCardFromHand(Card card) {
+    public void removeCardFromHand(Card card) {
         hand.remove(card);
     }
 
