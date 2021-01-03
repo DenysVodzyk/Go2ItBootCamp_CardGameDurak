@@ -20,21 +20,19 @@ public class GameService {
 
     public void startGame() {
         addPlayersToList();
-
         dealFirstSixCardsToPlayers();
         System.out.println("Trump suit " + getTrumpCardSuitOfDeck());
         System.out.println("Lowest trump card: " + getLowestTrumpCardOnHand());
         System.out.println("Player that attacks first: " + getPlayerThatAttacksFirst());
-
         System.out.println("List of players after adding: " + getListOfPlayers());
+        System.out.println();
 
         while (!checkForWinner()) {
             attack();
         }
-        System.out.println("Number of cards in the deck: " + deck.getDeckSize());
-        System.out.println("Congrats, Player " + winner.getId() + ". You are the winner!");
-    }
+        printWinner();
 
+    }
 
     public void addPlayersToList() {
         for (int i = 1; i <= numberOfPlayers; i++) {
@@ -96,18 +94,23 @@ public class GameService {
         return lowestTrumpCard;
     }
 
-
-    public void takeCardFromDeck(Player player) {
-        if (!deck.getDeck().isEmpty()) {
-            if (player.getHandSize() < 6) {
-                Card cardToTake = getNextCard(deck.getDeck());
-                player.addCardToHand(cardToTake);
-                deck.removeCardFromTheDeck(cardToTake);
+    public void takeCardFromDeck() {
+        for (Player player : listOfPlayers) {
+            if (!deck.getDeck().isEmpty()) {
+                if (player.getHandSize() < 6) {
+                    Card cardToTake = getNextCard(deck.getDeck());
+                    player.addCardToHand(cardToTake);
+                    deck.removeCardFromTheDeck(cardToTake);
+                }
             }
         }
     }
 
-    public void determineNextPlayer() {
+    public void printNumberOfCardsInDeck() {
+        System.out.println("Number of cards in the deck: " + deck.getDeckSize());
+    }
+
+    public void determineIndexOfPlayer() {
         if (listOfPlayers.get(listOfPlayers.size() - 1) == currentPlayer) {
             nextPlayer = listOfPlayers.get(0);
         } else {
@@ -116,34 +119,34 @@ public class GameService {
         }
     }
 
-
     public void attack() {
-        determineNextPlayer();
+        determineIndexOfPlayer();
         defendOrTakeCard();
-        System.out.println("Player " + currentPlayer.getId() + " has " + currentPlayer.getHand().size() + " cards.");
-        System.out.println("Player " + nextPlayer.getId() + " has " + nextPlayer.getHand().size() + " cards.");
-        takeCardFromDeck(currentPlayer);
-        takeCardFromDeck(nextPlayer);
-        currentPlayer = nextPlayer;
+        printNumberOfCardsEachPlayerHas();
+        printNumberOfCardsInDeck();
+        takeCardFromDeck();
+        passTurnFromCurrentPlayerToNextPlayer();
+        printNumberOfCardsEachPlayerHas();
+        printNumberOfCardsInDeck();
     }
 
-
     public void defendOrTakeCard() {
-        boolean result = false;
+        boolean defend = false;
         Card attackCard = getNextCard(currentPlayer.getHand());
         currentPlayer.removeCardFromHand(attackCard);
+        System.out.println("Player " + currentPlayer.getId() + " attacks.");
 
         if (attackCard.getSuit() == getTrumpCardSuitOfDeck()) {
-            result = checkIfCanBeDefeatedWithSameSuit(attackCard);
+            defend = checkIfCanBeDefeatedWithSameSuit(attackCard);
         } else {
-            result = checkIfCanBeDefeatedWithSameSuit(attackCard);
-            if (!result) {
-                result = checkIfCanBeDefeatedWithTrumpCard(attackCard);
+            defend = checkIfCanBeDefeatedWithSameSuit(attackCard);
+            if (!defend) {
+                defend = checkIfCanBeDefeatedWithTrumpCard(attackCard);
             }
         }
-        if (!result) {
+        if (!defend) {
             nextPlayer.addCardToHand(attackCard);
-            System.out.println("Player " + nextPlayer.getId() + " takes card " + attackCard + ". He skips the attack.");
+            System.out.println("Player " + nextPlayer.getId() + " takes " + attackCard + " Player skips the attack.");
             skipAttack();
         }
     }
@@ -155,6 +158,11 @@ public class GameService {
             int indexOfCurrentPlayer = listOfPlayers.indexOf(currentPlayer);
             currentPlayer = listOfPlayers.get(indexOfCurrentPlayer + 1);
         }
+        determineIndexOfPlayer();
+    }
+
+    public void passTurnFromCurrentPlayerToNextPlayer() {
+        currentPlayer = nextPlayer;
     }
 
 
@@ -167,7 +175,7 @@ public class GameService {
                 if (card.getCard_rank().getRank() > attackCardRank) {
                     nextPlayer.removeCardFromHand(card);
                     result = true;
-                    System.out.println("Player " + nextPlayer.getId() + " beat attacking card: " + attackCard + " with the card: " + card);
+                    System.out.println("Player " + nextPlayer.getId() + " beats attacking " + attackCard + " with the " + card);
                     break;
                 }
             }
@@ -181,7 +189,7 @@ public class GameService {
             if (card.getSuit() == getTrumpCardSuitOfDeck()) {
                 nextPlayer.removeCardFromHand(card);
                 result = true;
-                System.out.println("Player " + nextPlayer.getId() + " beat attacking card: " + attackCard + " with the trump card: " + card);
+                System.out.println("Player " + nextPlayer.getId() + " beat attacking " + attackCard + " with the trump " + card);
                 break;
             }
         }
@@ -197,6 +205,17 @@ public class GameService {
             }
         }
         return winnerFound;
+    }
+
+    public void printWinner() {
+        System.out.println("Congrats, Player " + winner.getId() + ". You are the winner!");
+    }
+
+    public void printNumberOfCardsEachPlayerHas() {
+        for (Player player : listOfPlayers) {
+            System.out.print(" Player: " + player.getId() + " - " + player.getHand().size() + " cards");
+        }
+        System.out.println();
     }
 }
 
