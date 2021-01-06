@@ -1,20 +1,20 @@
 import java.util.Objects;
 
 public class Card {
-    private CARD_RANK card_rank;
-    private SUIT suit;
+    private CardRank card_rank;
+    private Suit suit;
 
 
-    public Card(CARD_RANK card_rank, SUIT suit) {
+    public Card(CardRank card_rank, Suit suit) {
         this.card_rank = card_rank;
         this.suit = suit;
     }
 
-    public SUIT getSuit() {
+    public Suit getSuit() {
         return suit;
     }
 
-    public CARD_RANK getCard_rank() {
+    public CardRank getCard_rank() {
         return card_rank;
     }
 
