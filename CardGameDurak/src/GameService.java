@@ -28,7 +28,7 @@ public class GameService {
         System.out.println();
 
         while (!checkForWinner()) {
-            attack();
+            playRound();
         }
         printWinner();
 
@@ -58,12 +58,12 @@ public class GameService {
             while (getPlayerFromList(i).getHandSize() < 6) {
                 Card card = getNextCard(deck.getDeck());
                 getPlayerFromList(i).addCardToHand(card);
-                deck.removeCardFromTheDeck(card);
+                deck.removeFromDeck(card);
             }
         }
     }
 
-    public SUIT getTrumpCardSuitOfDeck() {
+    public Suit getTrumpCardSuitOfDeck() {
         return deck.getTrumpCardSuit();
     }
 
@@ -81,13 +81,13 @@ public class GameService {
     //return a trump card with a lowest rank among players, if none of the players have trump card - return first card of player 1.
     public Card getLowestTrumpCardOnHand() {
         Card lowestTrumpCard = getNextCard(getPlayerFromList(0).getHand());
-        int i = CARD_RANK.valueOf("SIX").ordinal();
-        boolean result = false;
+        int i = CardRank.valueOf("SIX").ordinal();
+        boolean isLowestTrumpCardFound = false;
 
-        while (!result) {
-            lowestTrumpCard = new Card(CARD_RANK.values()[i], getTrumpCardSuitOfDeck());
+        while (!isLowestTrumpCardFound) {
+            lowestTrumpCard = new Card(CardRank.values()[i], getTrumpCardSuitOfDeck());
             if (!deck.getDeck().contains(lowestTrumpCard)) {
-                result = true;
+                isLowestTrumpCardFound = true;
             }
             i--;
         }
@@ -100,7 +100,7 @@ public class GameService {
                 if (player.getHandSize() < 6) {
                     Card cardToTake = getNextCard(deck.getDeck());
                     player.addCardToHand(cardToTake);
-                    deck.removeCardFromTheDeck(cardToTake);
+                    deck.removeFromDeck(cardToTake);
                 }
             }
         }
@@ -110,8 +110,8 @@ public class GameService {
         System.out.println("Number of cards in the deck: " + deck.getDeckSize());
     }
 
-    public void determineIndexOfPlayer() {
-        if (listOfPlayers.get(listOfPlayers.size() - 1) == currentPlayer) {
+    public void determineNextPlayer() {
+        if (listOfPlayers.get(listOfPlayers.size() - 1).equals(currentPlayer)) {
             nextPlayer = listOfPlayers.get(0);
         } else {
             int indexOfCurrentPlayer = listOfPlayers.indexOf(currentPlayer);
@@ -119,9 +119,9 @@ public class GameService {
         }
     }
 
-    public void attack() {
-        determineIndexOfPlayer();
-        defendOrTakeCard();
+    public void playRound() {
+        determineNextPlayer();
+        attackAndDefendOrTake();
         printNumberOfCardsEachPlayerHas();
         printNumberOfCardsInDeck();
         takeCardFromDeck();
@@ -130,7 +130,8 @@ public class GameService {
         printNumberOfCardsInDeck();
     }
 
-    public void defendOrTakeCard() {
+
+    public void attackAndDefendOrTake() {
         boolean defend = false;
         Card attackCard = getNextCard(currentPlayer.getHand());
         currentPlayer.removeCardFromHand(attackCard);
@@ -152,13 +153,13 @@ public class GameService {
     }
 
     public void skipAttack() {
-        if (listOfPlayers.get(listOfPlayers.size() - 1) == currentPlayer) {
+        if (listOfPlayers.get(listOfPlayers.size() - 1).equals(currentPlayer)) {
             currentPlayer = listOfPlayers.get(0);
         } else {
             int indexOfCurrentPlayer = listOfPlayers.indexOf(currentPlayer);
             currentPlayer = listOfPlayers.get(indexOfCurrentPlayer + 1);
         }
-        determineIndexOfPlayer();
+        determineNextPlayer();
     }
 
     public void passTurnFromCurrentPlayerToNextPlayer() {
@@ -168,7 +169,7 @@ public class GameService {
 
     public boolean checkIfCanBeDefeatedWithSameSuit(Card attackCard) {
         boolean result = false;
-        SUIT attackCardSuit = attackCard.getSuit();
+        Suit attackCardSuit = attackCard.getSuit();
         int attackCardRank = attackCard.getCard_rank().getRank();
         for (Card card : nextPlayer.getHand()) {
             if (card.getSuit() == attackCardSuit) {
