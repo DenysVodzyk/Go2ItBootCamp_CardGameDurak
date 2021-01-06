@@ -5,24 +5,23 @@ import java.util.Set;
 public class Deck {
     private int cardsQuantity;
     private Set<Card> deck;
-    private Random random;
-    private SUIT trumpCardSuit;
+    private static Random random = new Random();
+    private Suit trumpCardSuit;
 
     public Deck() {
         this.cardsQuantity = 36;
         this.deck = new HashSet<>();
-        this.random = new Random();
-        makeDeck();
+        init();
     }
 
-    public void makeDeck() {
+    public void init() {
         while (deck.size() < cardsQuantity) {
             addCardsToTheDeck();
         }
     }
 
     public void addCardsToTheDeck() {
-        Card card = new Card(CARD_RANK.values()[getRandomNumberForCardRank()], SUIT.values()[getRandomNumberForCardSuit()]);
+        Card card = new Card(CardRank.values()[getRandomNumberForCardRank()], Suit.values()[getRandomNumberForCardSuit()]);
         deck.add(card);
     }
 
@@ -31,10 +30,10 @@ public class Deck {
     }
 
     public void setTrumpCardSuit() {
-        this.trumpCardSuit = SUIT.values()[getRandomNumberForCardSuit()];
+        this.trumpCardSuit = Suit.values()[getRandomNumberForCardSuit()];
     }
 
-    public SUIT getTrumpCardSuit() {
+    public Suit getTrumpCardSuit() {
         return trumpCardSuit;
     }
 
@@ -47,7 +46,7 @@ public class Deck {
         return deck;
     }
 
-    public void removeCardFromTheDeck(Card card) {
+    public void removeFromDeck(Card card) {
         deck.remove(card);
     }
 
