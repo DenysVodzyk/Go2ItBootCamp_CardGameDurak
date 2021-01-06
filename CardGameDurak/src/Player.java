@@ -1,4 +1,5 @@
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 public class Player {
@@ -32,6 +33,20 @@ public class Player {
 
     public void removeCardFromHand(Card card) {
         hand.remove(card);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Player player = (Player) o;
+        return id == player.id &&
+                Objects.equals(hand, player.hand);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, hand);
     }
 
     @Override
